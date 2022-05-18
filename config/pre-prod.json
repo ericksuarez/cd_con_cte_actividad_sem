@@ -1,0 +1,33 @@
+{
+  "workspace": "/workspaces/estrategia_clientes/app/bancoazteca/clientes/crystal_sem/wf_actividad_general_directo",
+  "pipeline": "wf_actividad_general_directo",
+  "esquema_cu": "ws_ec_cu_baz_bdclientes",
+  "esquema_cd": "ws_ec_cd_baz_bdclientes",
+  "files": {
+    "file": {
+      "path": "/workspaces/estrategia_clientes/app/bancoazteca/clientes/crystal_sem/common/config",
+      "name": "cd_gen_fechas_params_cat.csv"
+    }
+  },
+  "reprocessing": {
+    "fec_reproceso": ""
+  },
+  "cdc": {
+    "incremental_load": false,
+    "table_pro": {
+      "name": "cd_con_cte_actividad_sem",
+      "partitioned_by": [
+        "NUM_PERIODO_SEM"
+      ]
+    },
+    "table_tmp": {
+      "name": "cu_con_cte_actividad_sem"
+    },
+    "skip_id_md5": false,
+    "key": [
+      "ID_MASTER",
+      "NUM_PERIODO_SEM"
+    ],
+    "skip_id_md5completo": true
+  }
+}
