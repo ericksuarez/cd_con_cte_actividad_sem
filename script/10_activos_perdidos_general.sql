@@ -12,7 +12,7 @@ FROM(
 	FROM (
 		SELECT DISTINCT id_master
 		FROM ws_ec_cu_baz_bdclientes.cu_con_cte_actividad_prev_sem
-		WHERE num_periodo_sem IN (${num_periodo_sem},${num_periodo_sem1},${num_periodo_sem53}) AND ind_activo = 1
+		WHERE num_periodo_sem IN (${num_periodo_sem},${num_periodo_sem1},${num_periodo_sem53})
 		) AS master 
 	CROSS JOIN(
 		SELECT DISTINCT num_periodo_sem
