@@ -1,5 +1,5 @@
 --|************************************| PASO 01 |************************************|--
-INSERT OVERWRITE TABLE ws_ec_cu_baz_bdclientes.cu_esb_con_cte_act_sem_pvt
+INSERT OVERWRITE TABLE ${esquema_cu}.cu_esb_con_cte_act_sem_pvt
 SELECT 
 	 pvt.id_master
 	,ant.min_sem_act
@@ -11,33 +11,33 @@ FROM(
 		,semanas.num_periodo_sem
 	FROM (
 		SELECT DISTINCT id_master
-		FROM ws_ec_cu_baz_bdclientes.cu_con_cte_actividad_prev_sem
+		FROM ${esquema_cu}.cu_con_cte_actividad_prev_sem
 		WHERE num_periodo_sem IN (${num_periodo_sem},${num_periodo_sem1},${num_periodo_sem53})
 		) AS master 
 	CROSS JOIN(
 		SELECT DISTINCT num_periodo_sem
-		FROM ws_ec_cu_baz_bdclientes.cu_con_cte_actividad_prev_sem
+		FROM ${esquema_cu}.cu_con_cte_actividad_prev_sem
 		WHERE num_periodo_sem IN (${num_periodo_sem},${num_periodo_sem1},${num_periodo_sem53})
 		) AS semanas
 	) pvt
-LEFT JOIN ws_ec_cu_baz_bdclientes.cu_con_cte_actividad_pivot_aux ant	ON 
+LEFT JOIN ${esquema_cu}.cu_con_cte_actividad_pivot_aux ant	ON 
 	 pvt.id_master = ant.id_master AND 
 	(ant.min_sem_act <= ${num_periodo_sem} OR ant.min_sem_act_sin_afr <= ${num_periodo_sem})
 ;
 -- Inserted 68,995,408 row(s) 11s
-COMPUTE STATS ws_ec_cu_baz_bdclientes.cu_esb_con_cte_act_sem_pvt;
+COMPUTE STATS ${esquema_cu}.cu_esb_con_cte_act_sem_pvt;
 
 --|************************************| PASO 02 |************************************|--
-INSERT OVERWRITE TABLE ws_ec_cu_baz_bdclientes.cu_esb_con_cte_actividad_prev_sem
+INSERT OVERWRITE TABLE ${esquema_cu}.cu_esb_con_cte_actividad_prev_sem
 SELECT *
-FROM ws_ec_cu_baz_bdclientes.cu_con_cte_actividad_prev_sem
+FROM ${esquema_cu}.cu_con_cte_actividad_prev_sem
 WHERE num_periodo_sem IN (${num_periodo_sem},${num_periodo_sem1},${num_periodo_sem53})
 ;
 -- Inserted 68,995,408 row(s) 33s
-COMPUTE STATS ws_ec_cu_baz_bdclientes.cu_esb_con_cte_actividad_prev_sem;
+COMPUTE STATS ${esquema_cu}.cu_esb_con_cte_actividad_prev_sem;
 
 --|************************************| PASO 03 |************************************|--
-INSERT OVERWRITE TABLE ws_ec_cu_baz_bdclientes.cu_esb_con_cte_act_sem_core
+INSERT OVERWRITE TABLE ${esquema_cu}.cu_esb_con_cte_act_sem_core
 SELECT 
 	 pvt.id_master
 	,pvt.num_periodo_sem
@@ -127,16 +127,16 @@ SELECT
 	,act.cod_cte_usua_sin_afr
 	,pvt.min_sem_act
 	,pvt.min_sem_act_sin_afr
-FROM ws_ec_cu_baz_bdclientes.cu_esb_con_cte_act_sem_pvt pvt
-LEFT JOIN ws_ec_cu_baz_bdclientes.cu_esb_con_cte_actividad_prev_sem act ON 
+FROM ${esquema_cu}.cu_esb_con_cte_act_sem_pvt pvt
+LEFT JOIN ${esquema_cu}.cu_esb_con_cte_actividad_prev_sem act ON 
 	pvt.id_master       = act.id_master AND
 	pvt.num_periodo_sem = act.num_periodo_sem
 ;
 -- Inserted 68,995,408 row(s) 1m5s
-COMPUTE STATS ws_ec_cu_baz_bdclientes.cu_esb_con_cte_act_sem_core;
+COMPUTE STATS ${esquema_cu}.cu_esb_con_cte_act_sem_core;
    
 --|************************************| PASO 04 |************************************|--
-INSERT OVERWRITE TABLE ws_ec_cu_baz_bdclientes.cu_esb_con_cte_actividad_sem
+INSERT OVERWRITE TABLE ${esquema_cu}.cu_esb_con_cte_actividad_sem
 
 SELECT 
 	 id_master
@@ -321,21 +321,21 @@ SELECT
 		ELSE 'Sin Categoría 52s'
 		END AS cod_estatus_52s_gen_sin_afr
         ,num_periodo_sem
-FROM ws_ec_cu_baz_bdclientes.cu_esb_con_cte_act_sem_core
+FROM ${esquema_cu}.cu_esb_con_cte_act_sem_core
 ;
 
 -- Inserted 23,521,640 row(s) 33s
-COMPUTE STATS ws_ec_cu_baz_bdclientes.cu_esb_con_cte_actividad_sem;
+COMPUTE STATS ${esquema_cu}.cu_esb_con_cte_actividad_sem;
 
 --|************************************| PASO 05 |************************************|--
-INSERT OVERWRITE TABLE ws_ec_cu_baz_bdclientes.cu_con_cte_actividad_sem 
+INSERT OVERWRITE TABLE ${esquema_cu}.cu_con_cte_actividad_sem 
 
 SELECT *
-FROM ws_ec_cu_baz_bdclientes.cu_esb_con_cte_actividad_sem
+FROM ${esquema_cu}.cu_esb_con_cte_actividad_sem
 WHERE num_periodo_sem = ${num_periodo_sem} 
 ;
 
-COMPUTE STATS ws_ec_cu_baz_bdclientes.cu_con_cte_actividad_sem;
+COMPUTE STATS ${esquema_cu}.cu_con_cte_actividad_sem;
 
 --|************************************| PASO 06 TEMPORAL SOLO PARA EL REPROCESO |************************************|--
 /**
@@ -436,7 +436,7 @@ SELECT
     NULL AS id_md5completo,
     "2022-04-29 15:22:38.097433000" AS fec_carga,
     num_periodo_sem
-FROM ws_ec_cu_baz_bdclientes.cu_con_cte_actividad_sem
+FROM ${esquema_cu}.cu_con_cte_actividad_sem
 ;
 
 COMPUTE INCREMENTAL STATS ws_ec_cd_baz_bdclientes.cd_con_cte_actividad_sem ;
